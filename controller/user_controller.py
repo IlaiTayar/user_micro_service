@@ -1,4 +1,4 @@
-from typing import Union, Optional
+from typing import Union
 
 from fastapi import APIRouter, HTTPException, Query
 from starlette import status
@@ -16,9 +16,6 @@ def _exception_handler(result):
         if result == UserException.USER_NOT_FOUND:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"{result.value}")
 
-        if result == UserException.USER_EXISTS:
-            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"{result.value}")
-
         if result == UserException.MAIL_EXISTS:
             raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"{result.value}")
 
@@ -26,7 +23,7 @@ def _exception_handler(result):
             raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"{result.value}")
 
         if result == UserException.MISSING_FIELDS:
-            raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, detail=f"{result.value}")
+            raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=f"{result.value}")
 
     return result
 
@@ -39,7 +36,7 @@ async def create_user(user: UserRequest) -> str:
     return f"{result}"
 
 
-@router.put("/register/id-{user_id}", status_code=status.HTTP_200_OK)
+@router.put("/register/{user_id}", status_code=status.HTTP_200_OK)
 async def register_user(user_id: int) -> str:
     result = await user_service.register_user(user_id)
 
@@ -47,7 +44,7 @@ async def register_user(user_id: int) -> str:
     return f"{result}"
 
 
-@router.put("/update/id-{user_id}", status_code=status.HTTP_200_OK)
+@router.put("update/{user_id}", status_code=status.HTTP_200_OK)
 async def update_user(user_id: int, user: UserRequest) -> str:
     result: Union[str, UserException] = await user_service.update_user(user_id, user)
 
@@ -55,8 +52,8 @@ async def update_user(user_id: int, user: UserRequest) -> str:
     return f"{result}"
 
 
-@router.get("/search", response_model=User, status_code=status.HTTP_200_OK)
-async def get_user_by_id(user_id: Optional[int] = Query(None)) -> User:
+@router.get("/get/{user_id}", response_model=User, status_code=status.HTTP_200_OK)
+async def get_user_by_id(user_id: int) -> User:
     result: Union[User, UserException] = await user_service.get_user_by_id(user_id)
 
     result = _exception_handler(result)

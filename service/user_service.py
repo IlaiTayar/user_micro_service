@@ -54,10 +54,8 @@ async def update_user(user_id: int, user: UserRequest) -> Union[str, UserExcepti
     return f"user with mail: {user.email} and id: {user_id} updated successfully."
 
 
-async def get_user_by_id(user_id: Optional[int]) -> Union[User, UserException]:
-    if user_id is None:
-        return UserException.MISSING_FIELDS
-    user = await user_repository.get_user_by_id(user_id)
+async def get_user_by_id(user_id: int) -> Union[User, UserException]:
+    user: Optional[User] = await user_repository.get_user_by_id(user_id)
     if user is None:
         return UserException.USER_NOT_FOUND
 

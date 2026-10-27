@@ -12,13 +12,13 @@ router: APIRouter = APIRouter(prefix="/user",
 
 
 def _exception_handler(result: Union[str, UserException]) -> None:
-    if result == UserException.USER_NOT_FOUND:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"{result.name}")
+    if isinstance(result, UserException):
 
-    if result == UserException.USER_EXISTS:
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"{result.name}")
+        if result == UserException.USER_NOT_FOUND:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"{result.name}")
 
-
+        if result == UserException.USER_EXISTS:
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"{result.name}")
 
 
 @router.post("/create", status_code=status.HTTP_201_CREATED)

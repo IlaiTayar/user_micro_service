@@ -1,12 +1,11 @@
 from enum import Enum
-
+from typing import Optional
 from pydantic import BaseModel
-
 from datetime import date
 
 
 class User(BaseModel):
-    user_id: int = None
+    user_id: Optional[int] = None
     first_name: str
     last_name: str
     email: str

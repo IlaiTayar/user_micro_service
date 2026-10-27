@@ -4,7 +4,7 @@ from fastapi import APIRouter, HTTPException
 from starlette import status
 
 from model.base_model.user import UserException
-from model.requst_model.user_request import UserRequest
+from model.request_model.user_request import UserRequest
 from service import user_service
 
 router: APIRouter = APIRouter(prefix="/user",

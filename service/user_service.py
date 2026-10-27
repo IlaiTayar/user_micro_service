@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 from typing import Optional, Union
 
 from model.base_model.user import User, UserException
-from model.requst_model.user_request import UserRequest
+from model.request_model.user_request import UserRequest
 from repository import user_repository
 
 
@@ -11,8 +11,15 @@ async def create_user(user: UserRequest) -> Union[str, UserException]:
     if existing_user:
         return UserException.USER_EXISTS
 
-    new_user: User = User(**user.model_dump())
-    new_user.joining_date = datetime.now(timezone.utc)
+    new_user = User(
+        first_name=user.first_name,
+        last_name=user.last_name,
+        email=user.email,
+        age=user.age,
+        address=user.address,
+        joining_date=datetime.now(timezone.utc).date(),
+        is_registered=False
+    )
 
     user_id = await user_repository.create_user(new_user)
 

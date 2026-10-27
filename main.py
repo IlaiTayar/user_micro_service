@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-
+from controller.user_controller import router as user_router
 from database import database
 
 app = FastAPI()
@@ -15,3 +15,5 @@ async def shutdown():
     await database.disconnect()
 
 
+
+app.include_router(user_router)

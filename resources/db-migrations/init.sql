@@ -1,7 +1,7 @@
-DROP TABLE IF EXISTS `user`
 
 
-CREATE TABLE `user` (
+
+CREATE TABLE IF NOT EXISTS `user` (
     user_id INT AUTO_INCREMENT,
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,

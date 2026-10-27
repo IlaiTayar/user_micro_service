@@ -15,10 +15,13 @@ def _exception_handler(result: Union[str, UserException]) -> None:
     if isinstance(result, UserException):
 
         if result == UserException.USER_NOT_FOUND:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"{result.name}")
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"{result.value}")
 
         if result == UserException.USER_EXISTS:
-            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"{result.name}")
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"{result.value}")
+
+        if result == UserException.MAIL_EXISTS:
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"{result.value}")
 
 
 @router.post("/create", status_code=status.HTTP_201_CREATED)

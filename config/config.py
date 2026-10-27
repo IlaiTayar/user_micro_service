@@ -6,15 +6,7 @@ class Config(BaseSettings):
     MYSQL_USER: str = "ilai"
     MYSQL_PASSWORD: str = "123456789"
     MYSQL_HOST: str = "localhost"
-    MYSQL_PORT: int = 3306
+    MYSQL_PORT: int = 3308
     MYSQL_DATABASE: str = "main"
 
-
-
-    @computed_field
-    @property
-    def DATABASE_URL(self) -> str:
-        return (
-            f"mysql+aiomysql://{self.MYSQL_USER}:{self.MYSQL_PASSWORD}"
-            f"@{self.MYSQL_HOST}:{self.MYSQL_PORT}/{self.MYSQL_DATABASE}"
-        )
+    DATABASE_URL: str = f"mysql+pymysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DATABASE}"

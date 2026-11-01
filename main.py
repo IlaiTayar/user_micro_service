@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from controller.user_controller import router as user_router
+from controller.poll_service_controller import router as poll_service_router
 from database import database
 
 app = FastAPI()
@@ -18,3 +19,4 @@ async def shutdown():
 
 
 app.include_router(user_router)
+app.include_router(poll_service_router)

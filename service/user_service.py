@@ -79,9 +79,6 @@ async def delete_user_by_id(user_id: int):
 
     existing_answers: UserAnswer = await api.internal_api.poll_service.poll_service_api.get_user_answers(user_id=user_id)
     for answer in existing_answers.question_answer.keys():
-        if existing_answers.question_answer[answer] is None:
-            continue
-
         await api.internal_api.poll_service.poll_service_api.delete_answer(answer_id=answer)
 
     await user_repository.delete_user(user_id)

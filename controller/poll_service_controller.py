@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 from starlette import status
 
 from api.internal_api.poll_service import poll_service_api

@@ -37,9 +37,17 @@ async def get_poll_info(poll_id: int) -> dict:
     return response.json()
 
 
-async def answer_poll_question(answer: dict) -> dict:
+async def answer_poll_question(answer) -> dict:
     url = f"{config.POLL_SERVICE_URL}/user_answer/create"
-    payload = answer.model_dump() if hasattr(answer, "model_dump") else answer
+
+    if isinstance(answer, dict):
+        payload = answer
+    else:
+        payload = {
+            "user_id": answer.user_id,
+            "question_id": answer.question_id,
+            "option_id": answer.option_id,
+        }
 
     try:
         async with httpx.AsyncClient(timeout=5.0) as client:
@@ -71,9 +79,17 @@ async def answer_poll_question(answer: dict) -> dict:
     return response.json()
 
 
-async def update_answer(answer_id: int, answer: dict) -> dict:
+async def update_answer(answer_id: int, answer) -> dict:
     url = f"{config.POLL_SERVICE_URL}/user_answer/update/{answer_id}"
-    payload = answer.model_dump() if hasattr(answer, "model_dump") else answer
+
+    if isinstance(answer, dict):
+        payload = answer
+    else:
+        payload = {
+            "user_id": answer.user_id,
+            "question_id": answer.question_id,
+            "option_id": answer.option_id,
+        }
 
     try:
         async with httpx.AsyncClient(timeout=5.0) as client:

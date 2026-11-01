@@ -1,16 +1,10 @@
-from typing import Optional
-
 import httpx
 from fastapi import HTTPException
 
-from api.internal_api.poll_service.model.answer import Answer
-from api.internal_api.poll_service.model.poll import Poll
-from api.internal_api.poll_service.model.user_answer import UserAnswer
 from database import config
 
 
-
-async def get_poll_info(poll_id: int) -> Poll:
+async def get_poll_info(poll_id: int) -> dict:
     url = f"{config.POLL_SERVICE_URL}/poll/get/{poll_id}/details"
 
     try:
@@ -40,15 +34,16 @@ async def get_poll_info(poll_id: int) -> Poll:
             detail="Error communicating with Poll Service",
         ) from exc
 
-    return Poll(**response.json())
+    return response.json()
 
 
-async def answer_poll_question(answer: Answer) -> str:
+async def answer_poll_question(answer: dict) -> dict:
     url = f"{config.POLL_SERVICE_URL}/user_answer/create"
+    payload = answer.model_dump() if hasattr(answer, "model_dump") else answer
 
     try:
         async with httpx.AsyncClient(timeout=5.0) as client:
-            response = await client.post(url, json=answer)
+            response = await client.post(url, json=payload)
             response.raise_for_status()
     except httpx.HTTPStatusError as exc:
         if exc.response is not None and exc.response.status_code == 404:
@@ -76,12 +71,13 @@ async def answer_poll_question(answer: Answer) -> str:
     return response.json()
 
 
-async def update_answer(answer_id: int, answer: Answer) -> str:
+async def update_answer(answer_id: int, answer: dict) -> dict:
     url = f"{config.POLL_SERVICE_URL}/user_answer/update/{answer_id}"
+    payload = answer.model_dump() if hasattr(answer, "model_dump") else answer
 
     try:
         async with httpx.AsyncClient(timeout=5.0) as client:
-            response = await client.put(url, json=answer)
+            response = await client.put(url, json=payload)
             response.raise_for_status()
     except httpx.HTTPStatusError as exc:
         if exc.response is not None and exc.response.status_code == 404:
@@ -109,7 +105,7 @@ async def update_answer(answer_id: int, answer: Answer) -> str:
     return response.json()
 
 
-async def delete_answer(answer_id: int) -> str:
+async def delete_answer(answer_id: int) -> dict:
     url = f"{config.POLL_SERVICE_URL}/user_answer/delete/{answer_id}"
 
     try:
@@ -142,8 +138,8 @@ async def delete_answer(answer_id: int) -> str:
     return response.json()
 
 
-async def get_user_answers(user_id: int) -> UserAnswer:
-    url = f"{config.POLL_SERVICE_URL}/user_answer/get/by-user/{user_id}"
+async def get_user_answers(user_id: int) -> dict:
+    url = f"{config.POLL_SERVICE_URL}/user_answer/get/user/{user_id}"
 
     try:
         async with httpx.AsyncClient(timeout=5.0) as client:
@@ -172,5 +168,4 @@ async def get_user_answers(user_id: int) -> UserAnswer:
             detail="Error communicating with Poll Service",
         ) from exc
 
-    return UserAnswer(**response.json())
-
+    return response.json()

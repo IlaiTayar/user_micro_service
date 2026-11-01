@@ -1,6 +1,8 @@
 from datetime import datetime, timezone
 from typing import Optional, List
 
+import api.internal_api.poll_service.poll_service_api
+from api.internal_api.poll_service.model.user_answer import UserAnswer
 from exceptions.exception import (
     mail_exists_exception,
     user_is_registered_exception,
@@ -68,3 +70,20 @@ async def get_user_by_email(user_email: str) -> Optional[List[User]]:
     if len(users) == 0:
         return None
     return users
+
+
+async def delete_user_by_id(user_id: int):
+    user = await get_user_by_id(user_id)
+    if isinstance(user, Exception):
+        return user
+
+    existing_answers: UserAnswer = await api.internal_api.poll_service.poll_service_api.get_user_answers(user_id=user_id)
+    for answer in existing_answers.question_answer.keys():
+        if existing_answers.question_answer[answer] is None:
+            continue
+
+        await api.internal_api.poll_service.poll_service_api.delete_answer(answer_id=answer)
+
+    await user_repository.delete_user(user_id)
+    return f"user with id: {user_id} deleted successfully."
+

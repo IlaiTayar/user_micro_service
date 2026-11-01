@@ -28,3 +28,6 @@ def missing_fields_exception() -> HTTPException:
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
         detail="Missing required fields"
     )
+
+
+

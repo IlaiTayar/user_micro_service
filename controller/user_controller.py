@@ -37,3 +37,9 @@ async def update_user(user_id: int, user: UserRequest) -> str:
 async def get_user_by_id(user_id: int) -> User:
     result = await user_service.get_user_by_id(user_id)
     return _exception_handler(result)
+
+
+@router.delete("/delete/{user_id}", status_code=status.HTTP_200_OK)
+async def delete_user_by_id(user_id: int) -> str:
+    result = await user_service.delete_user_by_id(user_id)
+    return _exception_handler(result)

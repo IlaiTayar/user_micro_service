@@ -1,10 +1,16 @@
+from typing import Optional
+
 import httpx
 from fastapi import HTTPException
 
+from api.internal_api.poll_service.model.answer import Answer
+from api.internal_api.poll_service.model.poll import Poll
+from api.internal_api.poll_service.model.user_answer import UserAnswer
 from database import config
 
 
-async def get_poll_info(poll_id: int) -> dict:
+
+async def get_poll_info(poll_id: int) -> Poll:
     url = f"{config.POLL_SERVICE_URL}/poll/get/{poll_id}/details"
 
     try:
@@ -34,10 +40,10 @@ async def get_poll_info(poll_id: int) -> dict:
             detail="Error communicating with Poll Service",
         ) from exc
 
-    return response.json()
+    return Poll(**response.json())
 
 
-async def answer_poll_question(answer: dict) -> dict:
+async def answer_poll_question(answer: Answer) -> str:
     url = f"{config.POLL_SERVICE_URL}/user_answer/create"
 
     try:
@@ -70,7 +76,7 @@ async def answer_poll_question(answer: dict) -> dict:
     return response.json()
 
 
-async def update_answer(answer_id: int, answer: dict) -> dict:
+async def update_answer(answer_id: int, answer: Answer) -> str:
     url = f"{config.POLL_SERVICE_URL}/user_answer/update/{answer_id}"
 
     try:
@@ -103,7 +109,7 @@ async def update_answer(answer_id: int, answer: dict) -> dict:
     return response.json()
 
 
-async def delete_answer(answer_id: int) -> dict:
+async def delete_answer(answer_id: int) -> str:
     url = f"{config.POLL_SERVICE_URL}/user_answer/delete/{answer_id}"
 
     try:
@@ -136,8 +142,8 @@ async def delete_answer(answer_id: int) -> dict:
     return response.json()
 
 
-async def get_user_answers(user_id: int) -> dict:
-    url = f"{config.POLL_SERVICE_URL}/user_answer/get/user/{user_id}"
+async def get_user_answers(user_id: int) -> UserAnswer:
+    url = f"{config.POLL_SERVICE_URL}/user_answer/get/by-user/{user_id}"
 
     try:
         async with httpx.AsyncClient(timeout=5.0) as client:
@@ -166,4 +172,5 @@ async def get_user_answers(user_id: int) -> dict:
             detail="Error communicating with Poll Service",
         ) from exc
 
-    return response.json()
+    return UserAnswer(**response.json())
+

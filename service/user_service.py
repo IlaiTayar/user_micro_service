@@ -1,8 +1,7 @@
 from datetime import datetime, timezone
 from typing import Optional, List
 
-import api.internal_api.poll_service.poll_service_api
-from api.internal_api.poll_service.model.user_answer import UserAnswer
+from api.internal_api.poll_service import poll_service_api
 from exceptions.exception import (
     mail_exists_exception,
     user_is_registered_exception,
@@ -25,7 +24,7 @@ async def create_user(user: UserRequest):
         age=user.age,
         address=user.address,
         joining_date=datetime.now(timezone.utc).date(),
-        is_registered=False
+        is_registered=False,
     )
 
     user_id: int = await user_repository.create_user(new_user)
@@ -77,10 +76,6 @@ async def delete_user_by_id(user_id: int):
     if isinstance(user, Exception):
         return user
 
-    existing_answers: UserAnswer = await api.internal_api.poll_service.poll_service_api.get_user_answers(user_id=user_id)
-    for answer in existing_answers.question_answer.keys():
-        await api.internal_api.poll_service.poll_service_api.delete_answer(answer_id=answer)
-
+    await poll_service_api.delete_answers_by_user(user_id)
     await user_repository.delete_user(user_id)
     return f"user with id: {user_id} deleted successfully."
-

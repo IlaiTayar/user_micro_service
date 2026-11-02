@@ -1,3 +1,9 @@
+import httpx
+from fastapi import HTTPException
+
+from database import config
+
+
 async def delete_answers_by_user(user_id: int) -> str:
     url = f"{config.POLL_SERVICE_URL}/user_answer/delete/user/{user_id}"
 
